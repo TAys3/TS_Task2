@@ -15,23 +15,24 @@ center_y = int(screen_height / 2 - window_height / 2)
 root.geometry(f'{window_width}x{window_height}+{center_x}+{center_y}')
 root.resizable(False, False)
 
-pass_len = 0
+
 font = 'fira code'
 LOWER_CASE = string.ascii_lowercase
 UPPER_CASE = string.ascii_uppercase
 DIGITS = string.digits
 OTHER = string.punctuation
 
-def make_pass():   #generates a password based upon user's input
-    if pass_len_slider.get() == 1:    #This changes the label's text to the value of the slider
+def make_pass(event): 
+    global LOWER_CASE
+    if pass_len.get() == 1: 
         plural = ''
     else:
         plural = 's'
-    slider_label['text'] = f'''Password length: 
-{round(pass_len_slider.get())} character{plural}'''
+    slider_label.configure(text= f'''Password length: 
+{round(pass_len.get())} character{plural}''')
 
     pass_char = ""
-    if letters_var.get() == 1:     #These are to check if a box is ticked, and then add the characters if so
+    if letters_var.get() == 1: 
         pass_char += LOWER_CASE
     else:
         pass
@@ -49,7 +50,7 @@ def make_pass():   #generates a password based upon user's input
         pass
     
     Gen_Pass = ''
-    for i in range(int(round(pass_len_slider.get()))):  #This creates the password
+    for i in range(int(round(pass_len.get()))):
         Gen_Pass += random.choice(pass_char)
     Password = Gen_Pass
 
@@ -62,16 +63,18 @@ def make_pass():   #generates a password based upon user's input
 slider_label = ttk.Label(
     root, 
     text=f'''Password length: 
-{pass_len} characters''',
+0 characters''',
     font=(f'{font}', 12)
 )
 
+pass_len = tk.DoubleVar()
 pass_len_slider = ttk.Scale(
     root,
     from_= 0,
     to = 40,
     orient = 'horizontal',  # vertical
-    command = make_pass
+    command = make_pass,
+    variable = pass_len
 )
 
 letters_var = tk.StringVar()
@@ -112,8 +115,9 @@ root.columnconfigure(0, weight=1)
 root.columnconfigure(1, weight=3)
 slider_label.grid(column=0, row=0, sticky= tk.W, padx = 20, pady= 10)
 pass_len_slider.grid(column=0, row=2, sticky= tk.EW, padx = 20, pady= 10, columnspan= 2)
-letters.grid(column=0, row=4, sticky= tk.W, padx = 20, pady= 10, columnspan= 2)
-cap_letters.grid(column=1, row=4, sticky= tk.W, padx = 20, pady= 10, columnspan= 2)
+letters.grid(column=0, row=3, sticky= tk.W, padx = 20, pady= 10)
+cap_letters.grid(column=1, row=3, sticky= tk.W, padx = 20, pady= 10)
+numbers.grid(column=0, row=4, sticky= tk.W, padx = 20, pady= 10)
 
 
 root.mainloop()
