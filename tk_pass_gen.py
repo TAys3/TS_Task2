@@ -23,7 +23,6 @@ DIGITS = string.digits
 OTHER = string.punctuation
 
 def make_pass(event): 
-    global LOWER_CASE
     if pass_len.get() == 1: 
         plural = ''
     else:
@@ -31,28 +30,28 @@ def make_pass(event):
     slider_label.configure(text= f'''Password length: 
 {round(pass_len.get())} character{plural}''')
 
-    pass_char = ""
-    if letters_var.get() == 1: 
-        pass_char += LOWER_CASE
-    else:
-        pass
-    if cap_letters_var.get() == 1:
-        pass_char += UPPER_CASE
-    else:
-        pass
-    if numbers_var.get() == 1:
-        pass_char += DIGITS
-    else:
-        pass
-    if special_char_var.get() == 1:
-        pass_char += OTHER
-    else:
-        pass
+    # pass_char = ""
+    # if letters_var.get() == 1: 
+    #     pass_char += LOWER_CASE
+    # else:
+    #     pass
+    # if cap_letters_var.get() == 1:
+    #     pass_char += UPPER_CASE
+    # else:
+    #     pass
+    # if numbers_var.get() == 1:
+    #     pass_char += DIGITS
+    # else:
+    #     pass
+    # if special_char_var.get() == 1:
+    #     pass_char += OTHER
+    # else:
+    #     pass
     
-    Gen_Pass = ''
-    for i in range(int(round(pass_len.get()))):
-        Gen_Pass += random.choice(pass_char)
-    Password = Gen_Pass
+    # Gen_Pass = ''
+    # for i in range(int(round(pass_len.get()))):
+    #     Gen_Pass += random.choice(pass_char)
+    # Password = Gen_Pass
 
     
 
