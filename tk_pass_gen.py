@@ -117,6 +117,7 @@ pass_len_slider.grid(column=0, row=2, sticky= tk.EW, padx = 20, pady= 10, column
 letters.grid(column=0, row=3, sticky= tk.W, padx = 20, pady= 10)
 cap_letters.grid(column=1, row=3, sticky= tk.W, padx = 20, pady= 10)
 numbers.grid(column=0, row=4, sticky= tk.W, padx = 20, pady= 10)
-
+special_char.grid(column=1, row=4, sticky= tk.W, padx = 20, pady= 10)
+password_entry.grid(column=0, row=5, sticky= tk.EW, padx = 20, pady= 10, columnspan= 2)
 
 root.mainloop()
