@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import ttk
+from tkinter import CENTER, ttk
 import string
 import random
 
@@ -23,37 +23,39 @@ DIGITS = string.digits
 OTHER = string.punctuation
 
 def make_pass(event): 
-    if pass_len.get() == 1: 
+    if round(pass_len.get()) == 1: 
         plural = ''
     else:
         plural = 's'
     slider_label.configure(text= f'''Password length: 
 {round(pass_len.get())} character{plural}''')
+    make_pass2()
 
-    # pass_char = ""
-    # if letters_var.get() == 1: 
-    #     pass_char += LOWER_CASE
-    # else:
-    #     pass
-    # if cap_letters_var.get() == 1:
-    #     pass_char += UPPER_CASE
-    # else:
-    #     pass
-    # if numbers_var.get() == 1:
-    #     pass_char += DIGITS
-    # else:
-    #     pass
-    # if special_char_var.get() == 1:
-    #     pass_char += OTHER
-    # else:
-    #     pass
-    
-    # Gen_Pass = ''
-    # for i in range(int(round(pass_len.get()))):
-    #     Gen_Pass += random.choice(pass_char)
-    # Password = Gen_Pass
 
+def make_pass2(): 
+    pass_char = ""
+    if letters_var.get() == '1': 
+        pass_char += LOWER_CASE
+    else:
+        pass
+    if cap_letters_var.get() == '1':
+        pass_char += UPPER_CASE
+    else:
+        pass
+    if numbers_var.get() == '1':
+        pass_char += DIGITS
+    else:
+        pass
+    if special_char_var.get() == '1':
+        pass_char += OTHER
+    else:
+        pass
     
+    Gen_Pass = ''
+    for i in range(round(pass_len.get())):
+        Gen_Pass += random.choice(pass_char)
+    password_entry.delete(0, len(Password.get()))
+    password_entry.insert(0, Gen_Pass)
 
 
 
@@ -79,34 +81,35 @@ pass_len_slider = ttk.Scale(
 letters_var = tk.StringVar()
 letters = ttk.Checkbutton(root,
     text = 'a-z',
-    command = make_pass,
+    command = make_pass2,
     variable = letters_var,
 )
 
 cap_letters_var = tk.StringVar()
 cap_letters = ttk.Checkbutton(root,
     text ='A-Z',
-    command = make_pass,
+    command = make_pass2,
     variable = cap_letters_var,
 )
 
 numbers_var = tk.StringVar()
 numbers = ttk.Checkbutton(root,
     text = '0-9',
-    command = make_pass,
+    command = make_pass2,
     variable = numbers_var,
 )
 
 special_char_var = tk.StringVar()
 special_char = ttk.Checkbutton(root,
     text = '0-9',
-    command = make_pass,
+    command = make_pass2,
     variable = special_char_var,
 )
 
 Password = tk.StringVar()
 password_entry = ttk.Entry(
     root,
+    justify= CENTER,
     textvariable = Password,
 )
 
