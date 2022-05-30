@@ -1,7 +1,8 @@
 import tkinter as tk
-from tkinter import CENTER, ttk
+from tkinter import CENTER, LEFT, ttk
 import string
 import random
+import os
 
 root = tk.Tk()
 root.title('Password Generator')
@@ -15,12 +16,12 @@ center_y = int(screen_height / 2 - window_height / 2)
 root.geometry(f'{window_width}x{window_height}+{center_x}+{center_y}')
 root.resizable(False, False)
 
-
 font = 'fira code'
 LOWER_CASE = string.ascii_lowercase
 UPPER_CASE = string.ascii_uppercase
 DIGITS = string.digits
 OTHER = string.punctuation
+
 
 def make_pass(event): 
     if round(pass_len.get()) == 1: 
@@ -30,7 +31,6 @@ def make_pass(event):
     slider_label.configure(text= f'''Password length: 
 {round(pass_len.get())} character{plural}''')
     make_pass2()
-
 
 def make_pass2(): 
     pass_char = ""
@@ -57,7 +57,10 @@ def make_pass2():
     password_entry.delete(0, len(Password.get()))
     password_entry.insert(0, Gen_Pass)
 
-
+def copy_pass():
+    text = Password.get()
+    command = 'echo | set /p nul=' + text.strip() + '| clip'    #I have no idea how this works, it just does
+    os.system(command)
 
 
 
@@ -109,12 +112,22 @@ special_char = ttk.Checkbutton(root,
 Password = tk.StringVar()
 password_entry = ttk.Entry(
     root,
-    justify= CENTER,
+    justify = CENTER,
     textvariable = Password,
+)
+
+copy_img = tk.PhotoImage(file = './Resources/211649_clipboard_icon2.png')
+copy_to_clip = ttk.Button(
+    root,
+    image = copy_img,
+    text = "Copy to clipboard",
+    compound = tk.LEFT,
+    command = copy_pass
 )
 
 root.columnconfigure(0, weight=1)
 root.columnconfigure(1, weight=3)
+
 slider_label.grid(column=0, row=0, sticky= tk.W, padx = 20, pady= 10)
 pass_len_slider.grid(column=0, row=2, sticky= tk.EW, padx = 20, pady= 10, columnspan= 2)
 letters.grid(column=0, row=3, sticky= tk.W, padx = 20, pady= 10)
@@ -122,5 +135,6 @@ cap_letters.grid(column=1, row=3, sticky= tk.W, padx = 20, pady= 10)
 numbers.grid(column=0, row=4, sticky= tk.W, padx = 20, pady= 10)
 special_char.grid(column=1, row=4, sticky= tk.W, padx = 20, pady= 10)
 password_entry.grid(column=0, row=5, sticky= tk.EW, padx = 20, pady= 10, columnspan= 2)
+copy_to_clip.grid(column=0, row=6, sticky= tk.EW, padx = 20, pady= 10, columnspan= 2)
 
 root.mainloop()
