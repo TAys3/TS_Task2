@@ -62,8 +62,8 @@ def make_pass():                                    #makes the password based up
 
 def copy_pass():                                     #copies the password to the clipboard
     text = Password.get()
-    command = 'echo | set /p nul=' + text.strip() + '| clip'    #I have no idea how this works, it just does
-    os.system(command)
+    root.clipboard_clear()  # clear clipboard contents
+    root.clipboard_append(text)  # append new value to clipbaord
 
 
 #widgets and associated variables
