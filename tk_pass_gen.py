@@ -5,7 +5,6 @@ import tkinter as tk
 from tkinter import CENTER, ttk
 import string
 import random
-import os
 
 root = tk.Tk()
 root.title('Password Generator')
