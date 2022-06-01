@@ -41,6 +41,11 @@ header_label = ttk.Label(
 )
 
 website = tk.StringVar()
+website_label = ttk.Label(
+    dbtest, 
+    text= 'Website:',
+    font=(f'{font}', 12)
+)
 website_entry = ttk.Entry(
     dbtest,
     justify = CENTER,
@@ -48,6 +53,11 @@ website_entry = ttk.Entry(
 )
 
 username = tk.StringVar()
+username_label = ttk.Label(
+    dbtest, 
+    text= 'Username:',
+    font=(f'{font}', 12)
+)
 username_entry = ttk.Entry(
     dbtest,
     justify = CENTER,
@@ -55,6 +65,11 @@ username_entry = ttk.Entry(
 )
 
 password = tk.StringVar()
+password_label = ttk.Label(
+    dbtest, 
+    text= 'Password:',
+    font=(f'{font}', 12)
+)
 password_entry = ttk.Entry(
     dbtest,
     justify = CENTER,
@@ -65,10 +80,13 @@ password_entry = ttk.Entry(
 
 
 #grid and setup
-header_label.grid(column = 0, row = 0, sticky = tk.EW, padx = 20, pady = 15)
-website_entry.grid(column = 0, row = 1, sticky = tk.EW, padx = 20, pady = 15)
-username_entry.grid(column = 0, row = 2, sticky = tk.EW, padx = 20, pady = 15)
-password_entry.grid(column = 0, row = 3, sticky = tk.EW, padx = 20, pady = 15)
+header_label.grid(column = 0, row = 0, sticky = tk.EW, padx = 20, pady = 15, columnspan = 2)
+website_label.grid(column = 0, row = 1, sticky = tk.W, padx = 20, pady = 15)
+username_label.grid(column = 0, row = 2, sticky = tk.W, padx = 20, pady = 15)
+password_label.grid(column = 0, row = 3, sticky = tk.W, padx = 20, pady = 15)
+website_entry.grid(column = 1, row = 1, sticky = tk.EW, padx = 20, pady = 15, ipadx = 50, ipady = 3)
+username_entry.grid(column = 1, row = 2, sticky = tk.EW, padx = 20, pady = 15, ipadx = 50, ipady = 3)
+password_entry.grid(column = 1, row = 3, sticky = tk.EW, padx = 20, pady = 15, ipadx = 50, ipady = 3)
 
 
 
