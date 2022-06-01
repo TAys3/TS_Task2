@@ -1,3 +1,75 @@
 import sqlite3
+import tkinter as tk
+from tkinter import CENTER, ttk
 
-conn = sqlite3.connect('passwords.db')
+dbtest = tk.Tk()
+dbtest.title('db test')
+window_width = 400
+window_height = 500
+screen_width = dbtest.winfo_screenwidth()                                  #these 5 lines put the window in the middle of the screen
+screen_height = dbtest.winfo_screenheight()
+center_x = int(screen_width / 2 - window_width / 2)                      
+center_y = int(screen_height / 2 - window_height / 2)
+dbtest.geometry(f'{window_width}x{window_height}+{center_x}+{center_y}')   
+dbtest.resizable(False, False)
+font = 'fira code'
+
+#functions
+if 0 == 1:
+    conn = sqlite3.connect('password.db')
+
+    cur = conn.cursor()
+
+    # cur.execute("""CREATE TABLE passwords (
+    #     email text, 
+    #     password text
+    #     )""")
+
+    # cur.execute("""INSERT INTO passwords VALUES """)
+
+    conn.commit()
+    conn.close()
+
+
+
+
+#widgets
+header_label = ttk.Label(
+    dbtest, 
+    text= 'Save log in credentials:',
+    font=(f'{font}', 15)
+)
+
+website = tk.StringVar()
+website_entry = ttk.Entry(
+    dbtest,
+    justify = CENTER,
+    textvariable = website,
+)
+
+username = tk.StringVar()
+username_entry = ttk.Entry(
+    dbtest,
+    justify = CENTER,
+    textvariable = username,
+)
+
+password = tk.StringVar()
+password_entry = ttk.Entry(
+    dbtest,
+    justify = CENTER,
+    textvariable = password,
+)
+
+
+
+
+#grid and setup
+header_label.grid(column = 0, row = 0, sticky = tk.EW, padx = 20, pady = 15)
+website_entry.grid(column = 0, row = 1, sticky = tk.EW, padx = 20, pady = 15)
+username_entry.grid(column = 0, row = 2, sticky = tk.EW, padx = 20, pady = 15)
+password_entry.grid(column = 0, row = 3, sticky = tk.EW, padx = 20, pady = 15)
+
+
+
+dbtest.mainloop()
