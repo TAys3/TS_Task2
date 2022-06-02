@@ -1,12 +1,14 @@
 import sqlite3
 import tkinter as tk
 from tkinter import CENTER, ttk
+import os
+from tkinter.messagebox import askyesno
 
 dbtest = tk.Tk()
 dbtest.title('db test')
 window_width = 400
 window_height = 500
-screen_width = dbtest.winfo_screenwidth()                                  #these 5 lines put the window in the middle of the screen
+screen_width = dbtest.winfo_screenwidth()                     #these 5 lines put the window in the middle of the screen
 screen_height = dbtest.winfo_screenheight()
 center_x = int(screen_width / 2 - window_width / 2)                      
 center_y = int(screen_height / 2 - window_height / 2)
@@ -15,23 +17,35 @@ dbtest.resizable(False, False)
 font = 'fira code'
 
 #functions
-if 0 == 1:
+def clear_data():
+    answer = askyesno(title='confirmation',
+        message='Are you sure that you want to clear the database?')
+    if answer:
+        os.remove("password.db") 
+        conn = sqlite3.connect('password.db')
+        cur = conn.cursor()
+        cur.execute("""CREATE TABLE passwords (
+            website text,
+            username text,
+            password text
+            )""")
+        conn.commit()
+        conn.close()
+
+def save():
     conn = sqlite3.connect('password.db')
-
     cur = conn.cursor()
-
-    # cur.execute("""CREATE TABLE passwords (
-    #     email text, 
-    #     password text
-    #     )""")
-
-    # cur.execute("""INSERT INTO passwords VALUES """)
-
+    new_website = str(website.get())
+    new_username = str(username.get())
+    new_password = str(password.get())
+    cur.execute("INSERT INTO passwords VALUES (?,?,?)", (new_website, new_username, new_password))
     conn.commit()
     conn.close()
 
+    exit()
 
-
+def cancel():
+    exit()
 
 #widgets
 header_label = ttk.Label(
@@ -76,7 +90,23 @@ password_entry = ttk.Entry(
     textvariable = password,
 )
 
+save_button = ttk.Button(
+    dbtest,
+    text = 'Save',
+    command = save
+)
 
+cancel_button = ttk.Button(
+    dbtest,
+    text = 'Cancel',
+    command = cancel
+)
+
+removeDB_button = ttk.Button(
+    dbtest,
+    text = 'Clear database',
+    command = clear_data
+)
 
 
 #grid and setup
@@ -87,7 +117,9 @@ password_label.grid(column = 0, row = 3, sticky = tk.W, padx = 20, pady = 15)
 website_entry.grid(column = 1, row = 1, sticky = tk.EW, padx = 20, pady = 15, ipadx = 50, ipady = 3)
 username_entry.grid(column = 1, row = 2, sticky = tk.EW, padx = 20, pady = 15, ipadx = 50, ipady = 3)
 password_entry.grid(column = 1, row = 3, sticky = tk.EW, padx = 20, pady = 15, ipadx = 50, ipady = 3)
-
+save_button.grid(column = 0, row = 4, sticky = tk.W, padx = 25, pady = 50, ipadx = 5, ipady = 3)
+cancel_button.grid(column = 1, row = 4, sticky = tk.W, padx = 5, pady = 50, ipadx = 5, ipady = 3)
+removeDB_button.grid(column = 1, row = 5, sticky = tk.E, padx = 20, pady = 50, ipadx = 5, ipady = 3)
 
 
 dbtest.mainloop()
