@@ -1,6 +1,6 @@
 import hashlib
 
-string = "sdd2021"
+string = "result"
 encoded = string.encode()
 result = hashlib.sha256(encoded)
 print("String: ", end = "")

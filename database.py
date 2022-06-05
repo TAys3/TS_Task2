@@ -45,7 +45,6 @@ def save():
     conn.commit()
     conn.close()
 
-    os.system('manager.py')
     exit()
 
 def cancel():

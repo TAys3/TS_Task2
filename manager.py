@@ -7,7 +7,7 @@ import sqlite3
 
 #can add the ability to have different users depending on their login
 main = tk.Tk()
-main.title('Password Generator')
+main.title('Password Manager')
 window_width = 700
 window_height = 500
 screen_width = main.winfo_screenwidth()                                  #these 5 lines put the window in the middle of the screen
@@ -44,7 +44,14 @@ def item_selected(event):                   #change to update a label/s with the
         username_label.configure(text = f'Username: {recorded[1]}')
         password_label.configure(text = f'Password: {recorded[2]}')
 
+def remake_tree():
+    for record in tree.get_children():
+        tree.delete(record)
+    create_tree()
 
+def new_data():
+    os.system('database.py')
+    remake_tree()
 
 #widgets
 columns = ('website', 'username', 'password')
@@ -84,16 +91,33 @@ button = ttk.Button(
     command = window
 )
 
+remake_button = ttk.Button(
+    main,
+    text = 'Remake tree',
+    command = remake_tree()
+)
+
+new_data_button = ttk.Button(
+    main,
+    text = 'New credentials',
+    command = new_data
+)
 
 
 #layout
-tree.grid(row=0, column=0, sticky='nsew')
-scrollbar.grid(row=0, column=1, sticky='ns')
+tree.grid(row=0, column=0, sticky='nsew', columnspan= 5)
+scrollbar.grid(row=0, column=6, sticky='ns')
 
 website_label.grid(column=0, row=1, sticky= tk.W, padx = 20, pady= 10)
 username_label.grid(column=0, row=2, sticky= tk.W, padx = 20, pady= 10)
 password_label.grid(column=0, row=3, sticky= tk.W, padx = 20, pady= 10)
 button.grid(column=0, row=4, sticky= tk.W, padx = 20, pady= 10)
+remake_button.grid(column=0, row=5, sticky= tk.W, padx = 20, pady= 10)
+new_data_button.grid(column=0, row=6, sticky= tk.W, padx = 20, pady= 10)
 
+os.system('login.py')
+with open('f6a214f7a5fcda0c2cee9660b7fc29f5649e3c68aad48e20e950137c98913a68.txt', 'r') as f:
+    lines = f.readlines()
 
-main.mainloop()
+if lines[0] == '3cbc87c7681f34db4617feaa2c8801931bc5e42d8d0f560e756dd4cd92885f18':
+    main.mainloop()
