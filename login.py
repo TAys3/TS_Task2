@@ -20,7 +20,7 @@ login.resizable(False, False)
 login.iconbitmap('./Resources/lock_img.ico')
 font = 'fira code'
 
-os.remove('f6a214f7a5fcda0c2cee9660b7fc29f5649e3c68aad48e20e950137c98913a68.txt')
+
 
 #functions
 def log_in():
