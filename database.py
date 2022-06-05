@@ -4,6 +4,8 @@ from tkinter import CENTER, ttk
 import os
 from tkinter.messagebox import askyesno
 
+#can add the ability to have different users depending on their login
+
 dbtest = tk.Tk()
 dbtest.title('db test')
 window_width = 400
@@ -32,7 +34,8 @@ def clear_data():
         conn.commit()
         conn.close()
 
-def save():
+# maybe call a function to destroy the widget and then remake it, then exit
+def save():         
     conn = sqlite3.connect('password.db')
     cur = conn.cursor()
     new_website = str(website.get())
@@ -42,6 +45,7 @@ def save():
     conn.commit()
     conn.close()
 
+    os.system('manager.py')
     exit()
 
 def cancel():
