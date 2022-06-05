@@ -3,7 +3,6 @@ import tkinter as tk
 from tkinter import CENTER, ttk
 import sqlite3
 from tkinter.messagebox import showerror
-import os
 
 logged_in = False
 #can add the ability to have different users depending on their login
@@ -25,7 +24,7 @@ font = 'fira code'
 #functions
 def log_in():
     password_hash = hashlib.sha256((password.get()).encode('utf-8')).hexdigest()
-
+    
     conn = sqlite3.connect('users.db')
     cur = conn.cursor()
     cur.execute("SELECT * FROM user")
@@ -57,7 +56,6 @@ def log_in():
             login.destroy()
         else:
             showerror(title = "Error!", message = "Username or password incorrect!")
-        
 
 
 header_label = ttk.Label(

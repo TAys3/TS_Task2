@@ -4,18 +4,18 @@ import tkinter as tk
 from tkinter import CENTER, ttk
 from tkinter.messagebox import showerror
 
-conn = sqlite3.connect('users.db')
-cur = conn.cursor()
-cur.execute("""CREATE TABLE user (
-    username text,
-    password text
-    )""")
-usre = 'Taylor'
-passw = 'Password'
-passwhased = hashlib.sha256((passw).encode('utf-8')).hexdigest()
-cur.execute("INSERT INTO user VALUES (?,?)", (usre, passwhased))
-conn.commit()
-conn.close()
+# conn = sqlite3.connect('users.db')
+# cur = conn.cursor()
+# cur.execute("""CREATE TABLE user (
+#     username text,
+#     password text
+#     )""")
+# usre = 'Taylor'
+# passw = 'Password'
+# passwhased = hashlib.sha256((passw).encode('utf-8')).hexdigest()
+# cur.execute("INSERT INTO user VALUES (?,?)", (usre, passwhased))
+# conn.commit()
+# conn.close()
 
 add_user = tk.Tk()
 add_user.title('Add users')
