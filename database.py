@@ -50,6 +50,14 @@ def save():
 def cancel():
     exit()
 
+def save_gen_pass():
+    with open('new_pass.txt', 'r') as f:
+        lines = f.readlines()
+    os.remove('new_pass.txt')
+    password_entry.insert(0, lines)
+    dbtest.mainloop()
+
+
 #widgets
 header_label = ttk.Label(
     dbtest, 

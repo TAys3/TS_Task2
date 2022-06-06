@@ -73,7 +73,7 @@ username_label = ttk.Label(
 username_entry = ttk.Entry(
     login,
     justify = CENTER,
-    textvariable = username,
+    textvariable = username
 )
 
 password = tk.StringVar()

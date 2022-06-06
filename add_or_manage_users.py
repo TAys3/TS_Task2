@@ -57,7 +57,7 @@ def new_user():
         showerror(title = "Error!", message = "User already exists!")
     else:
         #why does it crash
-        from surely_this_works import commit
+        from for_some_reason_this_works import commit
         new_username = username.get()
         new_password = hashlib.sha256((password.get()).encode('utf-8')).hexdigest()
         commit(new_username, new_password)

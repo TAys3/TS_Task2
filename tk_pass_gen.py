@@ -64,6 +64,11 @@ def copy_pass():                                     #copies the password to the
     root.clipboard_clear()  # clear clipboard contents
     root.clipboard_append(text)  # append new value to clipbaord
 
+def save_pass():
+    with open('new_pass.txt', 'w') as f:
+        f.write(f'{Password.get()}')
+    from database import save_gen_pass
+    save_gen_pass()
 
 #widgets and associated variables
 slider_label = ttk.Label(
@@ -137,6 +142,13 @@ new_pass = ttk.Button(
     command = make_pass,
 )
 
+save_pass_button = ttk.Button(
+    root,
+    text = 'Save password',
+    command = save_pass,
+)
+
+
 
 
 #adding to window/layout
@@ -150,8 +162,8 @@ cap_letters.grid(column=1, row=3, sticky= tk.W, padx = 20, pady= 10)
 numbers.grid(column=0, row=4, sticky= tk.W, padx = 20, pady= 10)
 special_char.grid(column=1, row=4, sticky= tk.W, padx = 20, pady= 10)
 password_entry.grid(column=0, row=5, sticky= tk.EW, padx = 20, pady= 10, columnspan= 2, ipady= 10)
-copy_to_clip.grid(column=0, row=6, sticky= tk.EW, padx = 20, pady= 10, columnspan= 2, ipady= 10)
-new_pass.grid(column=0, row=7, sticky= tk.EW, padx = 20, pady= 20, columnspan= 2, ipady= 20)
-
+copy_to_clip.grid(column=0, row=6, sticky= tk.EW, padx = 20, pady= 5, columnspan= 2, ipady= 10)
+new_pass.grid(column=0, row=7, sticky= tk.EW, padx = 20, pady= 5, columnspan= 2, ipady= 20)
+save_pass_button.grid(column=0, row=8, sticky= tk.EW, padx = 20, pady= 5, columnspan= 2, ipady= 20)
 
 root.mainloop()
