@@ -5,6 +5,8 @@ import tkinter as tk
 from tkinter import CENTER, ttk
 import string
 import random
+import pyperclip
+import os
 
 root = tk.Tk()
 root.title('Password Generator')
@@ -61,14 +63,17 @@ def make_pass():                                    #makes the password based up
 
 def copy_pass():                                     #copies the password to the clipboard
     text = Password.get()
-    root.clipboard_clear()  # clear clipboard contents
-    root.clipboard_append(text)  # append new value to clipbaord
+    #doesn't work when I close the window
+    # root.clipboard_clear()  # clear clipboard contents
+    # root.clipboard_append(text)  # append new value to clipbaord
+    # root.update()
+    pyperclip.copy(text) 
+
 
 def save_pass():
     with open('new_pass.txt', 'w') as f:
         f.write(f'{Password.get()}')
-    from database import save_gen_pass
-    save_gen_pass()
+    os.system('database.py')
 
 #widgets and associated variables
 slider_label = ttk.Label(

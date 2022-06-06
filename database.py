@@ -55,7 +55,6 @@ def save_gen_pass():
         lines = f.readlines()
     os.remove('new_pass.txt')
     password_entry.insert(0, lines)
-    dbtest.mainloop()
 
 
 #widgets
@@ -99,6 +98,7 @@ password_entry = ttk.Entry(
     dbtest,
     justify = CENTER,
     textvariable = password,
+    show = '*'
 )
 
 save_button = ttk.Button(
@@ -119,6 +119,12 @@ removeDB_button = ttk.Button(
     command = clear_data
 )
 
+use_gen_pass = ttk.Button(
+    dbtest,
+    text = 'Generated password',
+    command = save_gen_pass
+)
+
 
 #grid and setup
 header_label.grid(column = 0, row = 0, sticky = tk.EW, padx = 20, pady = 15, columnspan = 2)
@@ -130,7 +136,9 @@ username_entry.grid(column = 1, row = 2, sticky = tk.EW, padx = 20, pady = 15, i
 password_entry.grid(column = 1, row = 3, sticky = tk.EW, padx = 20, pady = 15, ipadx = 50, ipady = 3)
 save_button.grid(column = 0, row = 4, sticky = tk.W, padx = 25, pady = 50, ipadx = 5, ipady = 3)
 cancel_button.grid(column = 1, row = 4, sticky = tk.W, padx = 5, pady = 50, ipadx = 5, ipady = 3)
-removeDB_button.grid(column = 1, row = 5, sticky = tk.E, padx = 20, pady = 50, ipadx = 5, ipady = 3)
+removeDB_button.grid(column = 0, row = 6, sticky = tk.W, padx = 5, pady = 5, ipadx = 5, ipady = 3)
+use_gen_pass.grid(column = 0, row = 5, sticky = tk.W, padx = 5, pady = 5, ipadx = 5, ipady = 3)
+
 
 
 dbtest.mainloop()
