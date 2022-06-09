@@ -4,13 +4,15 @@ from tkinter.messagebox import showinfo
 import os
 import sqlite3
 import pyperclip
+import webbrowser
+
 
 #can add the ability to have different users depending on their login
 main = tk.Tk()
 main.title('Password Manager')
 window_width = 700
 window_height = 500
-screen_width = main.winfo_screenwidth()                                  #these 5 lines put the window in the middle of the screen
+screen_width = main.winfo_screenwidth()             #these 5 lines put the window in the middle of the screen
 screen_height = main.winfo_screenheight()
 center_x = int(screen_width / 2 - window_width / 2)                      
 center_y = int(screen_height / 2 - window_height / 2)
@@ -19,24 +21,24 @@ main.resizable(False, False)
 font = 'fira code'
 
 #functions
-def window():
+def window():                                       #runs the password generator
     os.system('tk_pass_gen.py')
     remake_tree()
 
-def create_tree():
+def create_tree():                                  #creates the tree widget
     records = []
     conn = sqlite3.connect('password.db')
     cur = conn.cursor()
     cur.execute("SELECT * FROM passwords")
     db_records = cur.fetchall()
     conn.close()
-    for n in db_records:                     #need to change it to use password db
+    for n in db_records:
         records.append(n)
     
-    for record in records:                    #update the values (need to change a bit)
+    for record in records:                          #update the values
         tree.insert('', tk.END, values=record)
 
-def item_selected(event):                   #change to update a label/s with the info
+def item_selected(event):                           #updates the labels with selected info
     for selected_item in tree.selection():
         item = tree.item(selected_item)
         recorded = item['values']
@@ -45,39 +47,67 @@ def item_selected(event):                   #change to update a label/s with the
         username_label.configure(text = f'Username: {is_too_long(recorded[1])}')
         password_label.configure(text = f'Password: {is_too_long(recorded[2])}')
 
-def is_too_long(text):
+def is_too_long(text):                              #makes sure the copy button and other widgets aren't pushed around
     if len(text) <= 20:
         return text
     elif len(text) > 20:
         new = f'{text[:21]}...'
         return new
 
-def remake_tree():
+def remake_tree():                                  #remakes the tree to update it
     for record in tree.get_children():
         tree.delete(record)
     create_tree()
 
-def new_data():
+def new_data():                                     #runs the credentials 'adder'
     os.system('database.py')
     remake_tree()
 
-def copy_website():                                     #copies the password to the clipboard
+def open_website():                                 #opens the website
     for selected_item in tree.selection():
         item = tree.item(selected_item)
         recorded = item['values']
-    pyperclip.copy(recorded[0])
+    webbrowser.open(f'{recorded[0]}', new = 0, autoraise = True)
 
-def copy_user():                                     #copies the password to the clipboard
+def copy_user():                                    #copies the username to the clipboard
     for selected_item in tree.selection():
         item = tree.item(selected_item)
         recorded = item['values']
     pyperclip.copy(recorded[1])
 
-def copy_pass():                                     #copies the password to the clipboard
+def copy_pass():                                    #copies the password to the clipboard
     for selected_item in tree.selection():
         item = tree.item(selected_item)
         recorded = item['values']
     pyperclip.copy(recorded[2])
+
+def remove_data():                                  #delets a record from the database (probably very jank)
+    for selected_item in tree.selection():
+        item = tree.item(selected_item)
+        recorded = item['values']
+
+    conn = sqlite3.connect('password.db')
+    cur = conn.cursor()
+    website = f"%{recorded[0]}%"
+    username = recorded[1]
+    password = recorded[2]
+    cur.execute(f"SELECT rowid, * FROM passwords WHERE website LIKE '{website}'")
+    values = cur.fetchall()
+
+    found = False
+    for i in values:
+        if i[2] == username and found == False:
+            if i[3] == password:
+                id = int(i[0])
+                found = True
+        else:
+            pass
+    
+    if found == True:
+        cur.execute(f"DELETE FROM passwords WHERE rowid = {id}")
+    conn.commit()
+    conn.close()
+    remake_tree()
 
 
 #widgets
@@ -93,6 +123,7 @@ scrollbar = ttk.Scrollbar(main, orient=tk.VERTICAL, command=tree.yview)
 tree.configure(yscroll=scrollbar.set)
 
 create_tree()
+
 
 website_label = ttk.Label(
     main, 
@@ -119,12 +150,6 @@ button = ttk.Button(
     command = window
 )
 
-# remake_button = ttk.Button(
-#     main,
-#     text = 'Remake tree',
-#     command = remake_tree
-# )
-
 new_data_button = ttk.Button(
     main,
     text = 'New credentials',
@@ -132,12 +157,10 @@ new_data_button = ttk.Button(
 )
 
 copy_img = tk.PhotoImage(file = './Resources/small_clipboard_icon2.png')
-copy_website_button = ttk.Button(
+open_website_button = ttk.Button(
     main,
-    image = copy_img,
-    text = "Copy",
-    compound = tk.LEFT,
-    command = copy_website
+    text = "Go to",
+    command = open_website
 )
 
 copy_username = ttk.Button(
@@ -156,6 +179,14 @@ copy_password = ttk.Button(
     command = copy_pass
 )
 
+delete_button = ttk.Button(
+    main,
+    text = "Delete record",
+    compound = tk.LEFT,
+    command = remove_data
+)
+
+
 
 #layout
 tree.grid(row=0, column=0, sticky='nsew', columnspan= 5)
@@ -164,14 +195,13 @@ scrollbar.grid(row=0, column=6, sticky='ns')
 website_label.grid(column=0, row=1, sticky= tk.W, padx = 20, pady= 10)
 username_label.grid(column=0, row=2, sticky= tk.W, padx = 20, pady= 10)
 password_label.grid(column=0, row=3, sticky= tk.W, padx = 20, pady= 10)
-copy_website_button.grid(column=4, row=1, sticky= tk.W, padx = 20, pady= 10)
-copy_username.grid(column=4, row=2, sticky= tk.W, padx = 20, pady= 10)
-copy_password.grid(column=4, row=3, sticky= tk.W, padx = 20, pady= 10)
-
+open_website_button.grid(column=4, row=1, sticky= tk.E, padx = 20, pady= 10)
+copy_username.grid(column=4, row=2, sticky= tk.E, padx = 20, pady= 10)
+copy_password.grid(column=4, row=3, sticky= tk.E, padx = 20, pady= 10)
 
 button.grid(column=0, row=4, sticky= tk.W, padx = 20, pady= 10)
-# remake_button.grid(column=0, row=5, sticky= tk.W, padx = 20, pady= 10)
 new_data_button.grid(column=0, row=6, sticky= tk.W, padx = 20, pady= 10)
+delete_button.grid(column=0, row=7, sticky= tk.W, padx = 20, pady= 10)
 
 
 #don't know why I made it like this, I just did

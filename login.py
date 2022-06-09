@@ -30,14 +30,11 @@ def log_in():
     cur.execute("SELECT * FROM user")
     current_users = cur.fetchall()
     conn.close()
-    user_list = []
-    for i in current_users:
-        user_list.append(i[0])
     
     exists = False
     count = 0
-    while count < len(user_list) and exists == False:
-        if username.get() == user_list[count]:
+    while count < len(current_users) and exists == False:
+        if username.get() == current_users[count][0]:
             exists = True
             place = count
         else:
