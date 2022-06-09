@@ -29,7 +29,7 @@ def create_tree():                                  #creates the tree widget
     records = []
     conn = sqlite3.connect('password.db')
     cur = conn.cursor()
-    cur.execute("SELECT * FROM passwords")
+    cur.execute("SELECT website, username FROM passwords")
     db_records = cur.fetchall()
     conn.close()
     for n in db_records:
@@ -45,7 +45,7 @@ def item_selected(event):                           #updates the labels with sel
         #show record on labels
         website_label.configure(text = f'Website : {is_too_long(recorded[0])}')
         username_label.configure(text = f'Username: {is_too_long(recorded[1])}')
-        password_label.configure(text = f'Password: {is_too_long(recorded[2])}')
+        # password_label.configure(text = f'Password: {is_too_long(recorded[2])}')
 
 def is_too_long(text):                              #makes sure the copy button and other widgets aren't pushed around
     if len(text) <= 20:
@@ -76,10 +76,32 @@ def copy_user():                                    #copies the username to the 
     pyperclip.copy(recorded[1])
 
 def copy_pass():                                    #copies the password to the clipboard
+    #implement a password system similar to login/just run login again to protect password
     for selected_item in tree.selection():
         item = tree.item(selected_item)
         recorded = item['values']
-    pyperclip.copy(recorded[2])
+    # pyperclip.copy(recorded[2])
+    conn = sqlite3.connect('password.db')
+    cur = conn.cursor()
+    website = f"%{recorded[0]}%"
+    username = recorded[1]
+    cur.execute(f"SELECT rowid, website, username FROM passwords WHERE website LIKE '{website}'")
+    values = cur.fetchall()
+
+    found = False
+    for i in values:
+        if i[2] == username and found == False:
+            id = int(i[0])
+            found = True
+        else:
+            pass    
+    
+    if found == True:
+        cur.execute(f"SELECT password FROM passwords WHERE rowid = '{id}'")
+        pass_to_copy = cur.fetchall()
+        pyperclip.copy(pass_to_copy[0][0])
+    else:
+        pass
 
 def remove_data():                                  #delets a record from the database (probably very jank)
     for selected_item in tree.selection():
@@ -90,16 +112,14 @@ def remove_data():                                  #delets a record from the da
     cur = conn.cursor()
     website = f"%{recorded[0]}%"
     username = recorded[1]
-    password = recorded[2]
-    cur.execute(f"SELECT rowid, * FROM passwords WHERE website LIKE '{website}'")
+    cur.execute(f"SELECT rowid, website, username FROM passwords WHERE website LIKE '{website}'")
     values = cur.fetchall()
 
     found = False
     for i in values:
         if i[2] == username and found == False:
-            if i[3] == password:
-                id = int(i[0])
-                found = True
+            id = int(i[0])
+            found = True
         else:
             pass
     
@@ -111,11 +131,10 @@ def remove_data():                                  #delets a record from the da
 
 
 #widgets
-columns = ('website', 'username', 'password')
+columns = ('website', 'username')
 tree = ttk.Treeview(main, columns = columns, show = 'headings')
 tree.heading('website', text='Website')
 tree.heading('username', text='Username')
-tree.heading('password', text='Password')
 
 tree.bind('<<TreeviewSelect>>', item_selected)
 
@@ -138,11 +157,11 @@ username_label = ttk.Label(
     font=(f'{font}', 12)
 )
 
-password_label = ttk.Label(
-    main, 
-    text= 'Password:',
-    font=(f'{font}', 12),
-)
+# password_label = ttk.Label(
+#     main, 
+#     text= 'Password:',
+#     font=(f'{font}', 12),
+# )
 
 button = ttk.Button(
     main,
@@ -174,7 +193,7 @@ copy_username = ttk.Button(
 copy_password = ttk.Button(
     main,
     image = copy_img,
-    text = "Copy",
+    text = "Copy password",
     compound = tk.LEFT,
     command = copy_pass
 )
@@ -194,7 +213,7 @@ scrollbar.grid(row=0, column=6, sticky='ns')
 
 website_label.grid(column=0, row=1, sticky= tk.W, padx = 20, pady= 10)
 username_label.grid(column=0, row=2, sticky= tk.W, padx = 20, pady= 10)
-password_label.grid(column=0, row=3, sticky= tk.W, padx = 20, pady= 10)
+# password_label.grid(column=0, row=3, sticky= tk.W, padx = 20, pady= 10)
 open_website_button.grid(column=4, row=1, sticky= tk.E, padx = 20, pady= 10)
 copy_username.grid(column=4, row=2, sticky= tk.E, padx = 20, pady= 10)
 copy_password.grid(column=4, row=3, sticky= tk.E, padx = 20, pady= 10)
