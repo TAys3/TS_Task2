@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import CENTER, ttk
-from tkinter.messagebox import showinfo
+from tkinter.messagebox import showinfo, askyesno
 import os
 import sqlite3
 import pyperclip
@@ -59,7 +59,7 @@ def item_selected(event):                           #updates the labels with sel
             item = tree.item(selected_item)
             recorded = item['values']
             #show record on labels
-        website_label.configure(text = f'Website : {is_too_long(recorded[0])}')         #errors pop up here whenever I hide or show passwords, but it doesn't affect anything?
+        website_label.configure(text = f'Website : {is_too_long(recorded[0])}')         #errors pop up here for a few things, but it doesn't affect anything?
         username_label.configure(text = f'Username: {is_too_long(recorded[1])}')        #
     else:                                                                               #
         for selected_item in pass_tree.selection():                                     #"UnboundLocalError: local variable 'recorded' referenced before assignment" ?????????
@@ -68,7 +68,7 @@ def item_selected(event):                           #updates the labels with sel
             #show record on labels                                                      #Only happens after two clicks of the hide/show button ???
         website_label.configure(text = f'Website : {is_too_long(recorded[0])}')         #
         username_label.configure(text = f'Username: {is_too_long(recorded[1])}')        #
-        password_label.configure(text = f'Password: {is_too_long(recorded[2])}')        #I'm so confused by it, but it doesn't change anything. Will I lose marks?
+        password_label.configure(text = f'Password: {is_too_long(recorded[2])}')        #I think it's due to records moving around and stuff, and the selection going wonky, but idk. Hopefully won't lose marks
 
 def is_too_long(text):                              #makes sure the copy button and other widgets aren't pushed around
     if len(text) <= 20:
@@ -137,30 +137,32 @@ def copy_pass():                                    #copies the password to the 
             pass
 
 def remove_data():                                  #delets a record from the database (probably very jank)
-    for selected_item in tree.selection():
-        item = tree.item(selected_item)
-        recorded = item['values']
+    answer = askyesno(title = 'Are you sure?', message = 'Are you sure you want to delete?')
+    if answer == True:
+        for selected_item in tree.selection():
+            item = tree.item(selected_item)
+            recorded = item['values']
 
-    conn = sqlite3.connect('password.db')
-    cur = conn.cursor()
-    website = f"%{recorded[0]}%"
-    username = recorded[1]
-    cur.execute(f"SELECT rowid, website, username FROM passwords WHERE website LIKE '{website}'")
-    values = cur.fetchall()
+        conn = sqlite3.connect('password.db')
+        cur = conn.cursor()
+        website = f"%{recorded[0]}%"
+        username = recorded[1]
+        cur.execute(f"SELECT rowid, website, username FROM passwords WHERE website LIKE '{website}'")
+        values = cur.fetchall()
 
-    found = False
-    for i in values:
-        if i[2] == username and found == False:
-            id = int(i[0])
-            found = True
-        else:
-            pass
-    
-    if found == True:
-        cur.execute(f"DELETE FROM passwords WHERE rowid = {id}")
-    conn.commit()
-    conn.close()
-    remake_tree()
+        found = False
+        for i in values:
+            if i[2] == username and found == False:
+                id = int(i[0])
+                found = True
+            else:
+                pass
+        
+        if found == True:
+            cur.execute(f"DELETE FROM passwords WHERE rowid = {id}")
+        conn.commit()
+        conn.close()
+        remake_tree()
 
 def hide_show():
     global pass_visible
@@ -284,7 +286,6 @@ scrollbar.grid(row=0, column=6, sticky='ns')
 
 website_label.grid(column=0, row=1, sticky= tk.W, padx = 20, pady= 10, columnspan = 3)
 username_label.grid(column=0, row=2, sticky= tk.W, padx = 20, pady= 10, columnspan = 3)
-# password_label.grid(column=0, row=3, sticky= tk.W, padx = 20, pady= 10)
 open_website_button.grid(column=4, row=1, sticky= tk.E, padx = 20, pady= 10)
 copy_username.grid(column=4, row=2, sticky= tk.E, padx = 20, pady= 10)
 copy_password.grid(column=4, row=3, sticky= tk.E, padx = 20, pady= 10)
