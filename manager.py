@@ -136,7 +136,7 @@ def copy_pass():                                    #copies the password to the 
         else:
             pass
 
-def remove_data():                                  #delets a record from the database (probably very jank)
+def remove_data():                                  #deletes a record from the database (probably very jank)
     answer = askyesno(title = 'Are you sure?', message = 'Are you sure you want to delete?')
     if answer == True:
         for selected_item in tree.selection():
