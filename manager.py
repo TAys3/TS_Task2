@@ -19,6 +19,7 @@ center_y = int(screen_height / 2 - window_height / 2)
 main.geometry(f'{window_width}x{window_height}+{center_x}+{center_y}')   
 main.resizable(False, False)
 font = 'fira code'
+pass_visible = False
 
 #functions
 def window():                                       #runs the password generator
@@ -26,26 +27,48 @@ def window():                                       #runs the password generator
     remake_tree()
 
 def create_tree():                                  #creates the tree widget
+    global pass_visible
     records = []
     conn = sqlite3.connect('password.db')
     cur = conn.cursor()
-    cur.execute("SELECT * FROM passwords")
+    
+    if pass_visible == False:
+        cur.execute("SELECT website, username FROM passwords")
+    elif pass_visible == True:
+        cur.execute("SELECT * FROM passwords")
+    
     db_records = cur.fetchall()
     conn.close()
+    
     for n in db_records:
         records.append(n)
     
-    for record in records:                          #update the values
-        tree.insert('', tk.END, values=record)
+    if pass_visible == False:
+        for record in records:                          #update the values
+            tree.insert('', tk.END, values=record)
+        tree.grid(row=0, column=0, sticky='nsew', columnspan= 5)
+    else:
+        for record in records:                          #update the values
+            pass_tree.insert('', tk.END, values=record)
+        pass_tree.grid(row=0, column=0, sticky='nsew', columnspan= 5)
 
 def item_selected(event):                           #updates the labels with selected info
-    for selected_item in tree.selection():
-        item = tree.item(selected_item)
-        recorded = item['values']
-        #show record on labels
-        website_label.configure(text = f'Website : {is_too_long(recorded[0])}')
-        username_label.configure(text = f'Username: {is_too_long(recorded[1])}')
-        password_label.configure(text = f'Password: {is_too_long(recorded[2])}')
+    global pass_visible
+    if pass_visible == False:
+        for selected_item in tree.selection():
+            item = tree.item(selected_item)
+            recorded = item['values']
+            #show record on labels
+        website_label.configure(text = f'Website : {is_too_long(recorded[0])}')         #errors pop up here whenever I hide or show passwords, but it doesn't affect anything?
+        username_label.configure(text = f'Username: {is_too_long(recorded[1])}')        #
+    else:                                                                               #
+        for selected_item in pass_tree.selection():                                     #"UnboundLocalError: local variable 'recorded' referenced before assignment" ?????????
+            item = pass_tree.item(selected_item)                                        #
+            recorded = item['values']                                                   #
+            #show record on labels                                                      #Only happens after two clicks of the hide/show button ???
+        website_label.configure(text = f'Website : {is_too_long(recorded[0])}')         #
+        username_label.configure(text = f'Username: {is_too_long(recorded[1])}')        #
+        password_label.configure(text = f'Password: {is_too_long(recorded[2])}')        #I'm so confused by it, but it doesn't change anything. Will I lose marks?
 
 def is_too_long(text):                              #makes sure the copy button and other widgets aren't pushed around
     if len(text) <= 20:
@@ -55,19 +78,24 @@ def is_too_long(text):                              #makes sure the copy button 
         return new
 
 def remake_tree():                                  #remakes the tree to update it
-    for record in tree.get_children():
-        tree.delete(record)
+    global pass_visible
+    if pass_visible == False:
+        for record in tree.get_children():
+            tree.delete(record)
+    else:
+        for record in pass_tree.get_children():
+            pass_tree.delete(record)
     create_tree()
 
 def new_data():                                     #runs the credentials 'adder'
     os.system('database.py')
     remake_tree()
 
-def open_website():                                 #opens the website
+def open_website():                                 #opens the website (need to find a better way)
     for selected_item in tree.selection():
         item = tree.item(selected_item)
         recorded = item['values']
-    webbrowser.open(f'{recorded[0]}', new = 0, autoraise = True)
+    webbrowser.open(f'{recorded[0]}', new = 2, autoraise = True)
 
 def copy_user():                                    #copies the username to the clipboard
     for selected_item in tree.selection():
@@ -76,10 +104,37 @@ def copy_user():                                    #copies the username to the 
     pyperclip.copy(recorded[1])
 
 def copy_pass():                                    #copies the password to the clipboard
-    for selected_item in tree.selection():
-        item = tree.item(selected_item)
-        recorded = item['values']
-    pyperclip.copy(recorded[2])
+    os.system('pin_auth.py')
+    with open('pinworkornot.txt', 'r') as f:        #error if you don't get the pin correct as the directory is not created, but it still works
+        lines = f.readlines()
+    
+    if lines[0] == 'True':
+        os.remove('pinworkornot.txt')
+        for selected_item in tree.selection():
+            item = tree.item(selected_item)
+            recorded = item['values']
+
+        conn = sqlite3.connect('password.db')
+        cur = conn.cursor()
+        website = f"%{recorded[0]}%"
+        username = recorded[1]
+        cur.execute(f"SELECT rowid, website, username FROM passwords WHERE website LIKE '{website}'")
+        values = cur.fetchall()
+
+        found = False
+        for i in values:
+            if i[2] == username and found == False:
+                id = int(i[0])
+                found = True
+            else:
+                pass    
+        
+        if found == True:
+            cur.execute(f"SELECT password FROM passwords WHERE rowid = '{id}'")
+            pass_to_copy = cur.fetchall()
+            pyperclip.copy(pass_to_copy[0][0])
+        else:
+            pass
 
 def remove_data():                                  #delets a record from the database (probably very jank)
     for selected_item in tree.selection():
@@ -90,16 +145,14 @@ def remove_data():                                  #delets a record from the da
     cur = conn.cursor()
     website = f"%{recorded[0]}%"
     username = recorded[1]
-    password = recorded[2]
-    cur.execute(f"SELECT rowid, * FROM passwords WHERE website LIKE '{website}'")
+    cur.execute(f"SELECT rowid, website, username FROM passwords WHERE website LIKE '{website}'")
     values = cur.fetchall()
 
     found = False
     for i in values:
         if i[2] == username and found == False:
-            if i[3] == password:
-                id = int(i[0])
-                found = True
+            id = int(i[0])
+            found = True
         else:
             pass
     
@@ -109,18 +162,51 @@ def remove_data():                                  #delets a record from the da
     conn.close()
     remake_tree()
 
+def hide_show():
+    global pass_visible
+    if pass_visible == False:
+        os.system('pin_auth.py')
+        with open('pinworkornot.txt', 'r') as f:
+            lines = f.readlines()
+
+        if lines[0] == 'True':
+            os.remove('pinworkornot.txt')
+            pass_visible = True
+            tree.grid_forget()
+            password_label.grid(column=0, row=3, sticky= tk.W, padx = 20, pady= 10, columnspan = 3)
+        else:
+            pass
+
+    else:
+        pass_visible = False
+        pass_tree.grid_forget()
+        password_label.grid_forget()
+    remake_tree()
+
 
 #widgets
-columns = ('website', 'username', 'password')
+columns = ('website', 'username')
 tree = ttk.Treeview(main, columns = columns, show = 'headings')
 tree.heading('website', text='Website')
 tree.heading('username', text='Username')
-tree.heading('password', text='Password')
 
 tree.bind('<<TreeviewSelect>>', item_selected)
 
 scrollbar = ttk.Scrollbar(main, orient=tk.VERTICAL, command=tree.yview)
 tree.configure(yscroll=scrollbar.set)
+
+
+columns_2 = ('website', 'username', 'password')
+pass_tree = ttk.Treeview(main, columns = columns_2, show = 'headings')
+pass_tree.heading('website', text='Website')
+pass_tree.heading('username', text='Username')
+pass_tree.heading('password', text='Password')
+
+pass_tree.bind('<<TreeviewSelect>>', item_selected)
+
+scrollbar2 = ttk.Scrollbar(main, orient=tk.VERTICAL, command=tree.yview)
+tree.configure(yscroll=scrollbar.set)
+
 
 create_tree()
 
@@ -174,7 +260,7 @@ copy_username = ttk.Button(
 copy_password = ttk.Button(
     main,
     image = copy_img,
-    text = "Copy",
+    text = "Copy password",
     compound = tk.LEFT,
     command = copy_pass
 )
@@ -186,15 +272,19 @@ delete_button = ttk.Button(
     command = remove_data
 )
 
-
+hide_or_show = ttk.Button(
+    main,
+    text = "Hide/Show passwords",
+    compound = tk.LEFT,
+    command = hide_show
+)
 
 #layout
-tree.grid(row=0, column=0, sticky='nsew', columnspan= 5)
 scrollbar.grid(row=0, column=6, sticky='ns')
 
-website_label.grid(column=0, row=1, sticky= tk.W, padx = 20, pady= 10)
-username_label.grid(column=0, row=2, sticky= tk.W, padx = 20, pady= 10)
-password_label.grid(column=0, row=3, sticky= tk.W, padx = 20, pady= 10)
+website_label.grid(column=0, row=1, sticky= tk.W, padx = 20, pady= 10, columnspan = 3)
+username_label.grid(column=0, row=2, sticky= tk.W, padx = 20, pady= 10, columnspan = 3)
+# password_label.grid(column=0, row=3, sticky= tk.W, padx = 20, pady= 10)
 open_website_button.grid(column=4, row=1, sticky= tk.E, padx = 20, pady= 10)
 copy_username.grid(column=4, row=2, sticky= tk.E, padx = 20, pady= 10)
 copy_password.grid(column=4, row=3, sticky= tk.E, padx = 20, pady= 10)
@@ -202,7 +292,7 @@ copy_password.grid(column=4, row=3, sticky= tk.E, padx = 20, pady= 10)
 button.grid(column=0, row=4, sticky= tk.W, padx = 20, pady= 10)
 new_data_button.grid(column=0, row=6, sticky= tk.W, padx = 20, pady= 10)
 delete_button.grid(column=0, row=7, sticky= tk.W, padx = 20, pady= 10)
-
+hide_or_show.grid(column=1, row=7, sticky= tk.W, padx = 20, pady= 10)
 
 #don't know why I made it like this, I just did
 os.system('login.py')
