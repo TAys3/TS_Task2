@@ -47,10 +47,13 @@ def create_tree():                                  #creates the tree widget
         for record in records:                          #update the values
             tree.insert('', tk.END, values=record)
         tree.grid(row=0, column=0, sticky='nsew', columnspan= 5)
+        scrollbar.grid(row=0, column=6, sticky='ns')
+
     else:
         for record in records:                          #update the values
             pass_tree.insert('', tk.END, values=record)
         pass_tree.grid(row=0, column=0, sticky='nsew', columnspan= 5)
+        scrollbar2.grid(row=0, column=6, sticky='ns')
 
 def item_selected(event):                           #updates the labels with selected info
     global pass_visible
@@ -164,7 +167,7 @@ def remove_data():                                  #deletes a record from the d
         conn.close()
         remake_tree()
 
-def hide_show():
+def hide_show():                                    #hides and shows the passwords column, which has the passwords in plain text (probably could have just remade the tree with *'s instead of the password in plain text)
     global pass_visible
     if pass_visible == False:
         os.system('pin_auth.py')
@@ -175,6 +178,7 @@ def hide_show():
             os.remove('pinworkornot.txt')
             pass_visible = True
             tree.grid_forget()
+            scrollbar.grid_forget()
             password_label.grid(column=0, row=3, sticky= tk.W, padx = 20, pady= 10, columnspan = 3)
         else:
             pass
@@ -183,6 +187,7 @@ def hide_show():
         pass_visible = False
         pass_tree.grid_forget()
         password_label.grid_forget()
+        scrollbar2.grid_forget()
     remake_tree()
 
 
@@ -206,8 +211,8 @@ pass_tree.heading('password', text='Password')
 
 pass_tree.bind('<<TreeviewSelect>>', item_selected)
 
-scrollbar2 = ttk.Scrollbar(main, orient=tk.VERTICAL, command=tree.yview)
-tree.configure(yscroll=scrollbar.set)
+scrollbar2 = ttk.Scrollbar(main, orient=tk.VERTICAL, command=pass_tree.yview)
+pass_tree.configure(yscroll=scrollbar2.set)
 
 
 create_tree()

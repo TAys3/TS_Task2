@@ -4,18 +4,6 @@ import tkinter as tk
 from tkinter import CENTER, ttk
 from tkinter.messagebox import showerror
 
-# conn = sqlite3.connect('users.db')
-# cur = conn.cursor()
-# cur.execute("""CREATE TABLE user (
-#     username text,
-#     password text
-#     )""")
-# usre = 'Taylor'
-# passw = 'Password'
-# passwhased = hashlib.sha256((passw).encode('utf-8')).hexdigest()
-# cur.execute("INSERT INTO user VALUES (?,?)", (usre, passwhased))
-# conn.commit()
-# conn.close()
 
 add_user = tk.Tk()
 add_user.title('Add users')
@@ -30,11 +18,8 @@ add_user.resizable(False, False)
 font = 'fira code'
 
 
-
-
-
 #functions
-def new_user():
+def new_user():                                                             #adds a new user
     conn = sqlite3.connect('users.db')
     cur = conn.cursor()
     cur.execute("SELECT * FROM user")
@@ -46,7 +31,7 @@ def new_user():
 
     exists = False
     counter = 0
-    while counter < len(user_list) and exists == False:
+    while counter < len(user_list) and exists == False:                     #checks if the username already exists
         if username.get() == user_list[counter]:
             exists = True
         else:
@@ -56,7 +41,7 @@ def new_user():
     if exists == True:
         showerror(title = "Error!", message = "User already exists!")
     else:
-        #why does it crash
+        #why does it crash ---- Nevermind, this seems to just work i=I guess
         from for_some_reason_this_works import commit
         new_username = username.get()
         new_password = hashlib.sha256((password.get()).encode('utf-8')).hexdigest()

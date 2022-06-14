@@ -19,13 +19,13 @@ dbtest.resizable(False, False)
 font = 'fira code'
 
 #functions
-def clear_data():
+def clear_data():                                                       #this clears ALL credential entries
     answer = askyesno(title='confirmation',
         message='Are you sure that you want to clear the database?')
-    if answer:
-        os.remove("password.db") 
+    if answer: 
         conn = sqlite3.connect('password.db')
         cur = conn.cursor()
+        cur.execute("DROP TABLE passwords")
         cur.execute("""CREATE TABLE passwords (
             website text,
             username text,
@@ -34,8 +34,8 @@ def clear_data():
         conn.commit()
         conn.close()
 
-# maybe call a function to destroy the widget and then remake it, then exit
-def save():         
+
+def save():                                                             #saves the new credentials to the passwords table    
     conn = sqlite3.connect('password.db')
     cur = conn.cursor()
     new_website = str(website.get())
@@ -47,10 +47,10 @@ def save():
 
     exit()
 
-def cancel():
+def cancel():                                                           #exits
     exit()
 
-def save_gen_pass():
+def save_gen_pass():                                                    #a jank way of saving a generated password
     with open('new_pass.txt', 'r') as f:
         lines = f.readlines()
     os.remove('new_pass.txt')

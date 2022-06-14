@@ -22,7 +22,7 @@ font = 'fira code'
 
 
 #functions
-def log_in():
+def log_in():                                                            #checks the user's login credentials, and logs them in if they are correct.
     password_hash = hashlib.sha256((password.get()).encode('utf-8')).hexdigest()
     
     conn = sqlite3.connect('users.db')
@@ -33,7 +33,7 @@ def log_in():
     
     exists = False
     count = 0
-    while count < len(current_users) and exists == False:
+    while count < len(current_users) and exists == False:               #checks the input username
         if username.get() == current_users[count][0]:
             exists = True
             place = count
@@ -42,13 +42,13 @@ def log_in():
         count += 1
     
     global logged_in
-    if exists == False:
+    if exists == False:                                                 #checks the input password
         showerror(title = "Error!", message = "Username or password incorrect!")
     else:
         if current_users[place][1] == password_hash:
             logged_in = True
             logged = hashlib.sha256((str(logged_in)).encode('utf-8')).hexdigest()
-            with open('f6a214f7a5fcda0c2cee9660b7fc29f5649e3c68aad48e20e950137c98913a68.txt', 'w') as f:
+            with open('f6a214f7a5fcda0c2cee9660b7fc29f5649e3c68aad48e20e950137c98913a68.txt', 'w') as f:        #allows the login
                 f.write(f'{logged}')
             login.destroy()
         else:

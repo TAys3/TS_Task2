@@ -74,6 +74,7 @@ def save_pass():
     with open('new_pass.txt', 'w') as f:
         f.write(f'{Password.get()}')
     os.system('database.py')
+    exit()
 
 #widgets and associated variables
 slider_label = ttk.Label(
