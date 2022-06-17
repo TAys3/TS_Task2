@@ -41,6 +41,8 @@ def check_pin():
     conn.commit()
     conn.close()
 
+def check_pin2(event):
+    check_pin()
 
 
 pin_lbl = ttk.Label(
@@ -55,6 +57,7 @@ pin_entry = website_entry = ttk.Entry(
 auth_change,
 justify = CENTER,
 textvariable = Pin,
+show = '*'
 )
 pin_entry.grid(column = 0, row=1, sticky= tk.EW, padx = 20, pady= 10, columnspan= 2)
 
@@ -67,5 +70,6 @@ command = check_pin
 ok_button.grid(column=2, row=1, sticky= tk.W, padx = 20, pady= 10)
 
 
+auth_change.bind('<Return>', check_pin2)
 
 auth_change.mainloop()

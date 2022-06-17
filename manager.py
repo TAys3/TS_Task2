@@ -11,15 +11,17 @@ import webbrowser
 main = tk.Tk()
 main.title('Password Manager')
 window_width = 700
-window_height = 500
+window_height = 600
 screen_width = main.winfo_screenwidth()             #these 5 lines put the window in the middle of the screen
 screen_height = main.winfo_screenheight()
 center_x = int(screen_width / 2 - window_width / 2)                      
 center_y = int(screen_height / 2 - window_height / 2)
 main.geometry(f'{window_width}x{window_height}+{center_x}+{center_y}')   
 main.resizable(False, False)
+main.iconbitmap('./Resources/lock_img.ico')
 font = 'fira code'
 pass_visible = False
+bin_frame = 'closed'
 
 #functions
 def window():                                       #runs the password generator
@@ -46,13 +48,13 @@ def create_tree():                                  #creates the tree widget
     if pass_visible == False:
         for record in records:                          #update the values
             tree.insert('', tk.END, values=record)
-        tree.grid(row=0, column=0, sticky='nsew', columnspan= 5)
+        tree.grid(row=0, column=0, sticky='nsew', columnspan= 6)
         scrollbar.grid(row=0, column=6, sticky='ns')
 
     else:
         for record in records:                          #update the values
             pass_tree.insert('', tk.END, values=record)
-        pass_tree.grid(row=0, column=0, sticky='nsew', columnspan= 5)
+        pass_tree.grid(row=0, column=0, sticky='nsew', columnspan= 6)
         scrollbar2.grid(row=0, column=6, sticky='ns')
 
 def item_selected(event):                           #updates the labels with selected info
@@ -180,6 +182,8 @@ def hide_show():                                    #hides and shows the passwor
             tree.grid_forget()
             scrollbar.grid_forget()
             password_label.grid(column=0, row=3, sticky= tk.W, padx = 20, pady= 10, columnspan = 3)
+            show_pass.grid_forget()
+            hide_pass.grid(column=1, row=7, sticky= tk.W, padx = 20, pady= 10)
         else:
             pass
 
@@ -188,12 +192,25 @@ def hide_show():                                    #hides and shows the passwor
         pass_tree.grid_forget()
         password_label.grid_forget()
         scrollbar2.grid_forget()
+        hide_pass.grid_forget()
+        show_pass.grid(column=1, row=7, sticky= tk.W, padx = 20, pady= 10)
     remake_tree()
+
+def change_bin(event):
+    global bin_frame
+    if bin_frame == 'closed':
+        delete_button1.grid_forget()
+        delete_button2.grid(column=0, row=7, sticky= tk.W, padx = 20, pady= 10)
+        bin_frame = 'open'
+    elif bin_frame == 'open':
+        delete_button2.grid_forget()
+        delete_button1.grid(column=0, row=7, sticky= tk.W, padx = 20, pady= 10)
+        bin_frame = 'closed'
 
 
 #widgets
 columns = ('website', 'username')
-tree = ttk.Treeview(main, columns = columns, show = 'headings')
+tree = ttk.Treeview(main, columns = columns, show = 'headings', selectmode = 'browse')
 tree.heading('website', text='Website')
 tree.heading('username', text='Username')
 
@@ -204,7 +221,7 @@ tree.configure(yscroll=scrollbar.set)
 
 
 columns_2 = ('website', 'username', 'password')
-pass_tree = ttk.Treeview(main, columns = columns_2, show = 'headings')
+pass_tree = ttk.Treeview(main, columns = columns_2, show = 'headings', selectmode = 'browse')
 pass_tree.heading('website', text='Website')
 pass_tree.heading('username', text='Username')
 pass_tree.heading('password', text='Password')
@@ -249,13 +266,16 @@ new_data_button = ttk.Button(
     command = new_data
 )
 
-copy_img = tk.PhotoImage(file = './Resources/small_clipboard_icon2.png')
+web_img = tk.PhotoImage(file = './Resources/net.png')
 open_website_button = ttk.Button(
     main,
+    image = web_img,
+    compound = tk.LEFT,
     text = "Go to",
     command = open_website
 )
 
+copy_img = tk.PhotoImage(file = './Resources/small_clipboard_icon2.png')
 copy_username = ttk.Button(
     main,
     image = copy_img,
@@ -272,33 +292,62 @@ copy_password = ttk.Button(
     command = copy_pass
 )
 
-delete_button = ttk.Button(
+delete_img_closed = tk.PhotoImage(file = './Resources/closed_bin2.png')
+delete_button1 = ttk.Button(
     main,
+    image = delete_img_closed, 
     text = "Delete record",
     compound = tk.LEFT,
     command = remove_data
 )
 
-hide_or_show = ttk.Button(
+delete_img_open = tk.PhotoImage(file = './Resources/open_bin2.png')
+delete_button2 = ttk.Button(
     main,
-    text = "Hide/Show passwords",
+    image = delete_img_open, 
+    text = "Delete record",
+    compound = tk.LEFT,
+    command = remove_data
+)
+
+eye_closed_img = tk.PhotoImage(file = './Resources/show2.png')
+show_pass = ttk.Button(
+    main,
+    image = eye_closed_img,
+    text = "Show passwords",
     compound = tk.LEFT,
     command = hide_show
 )
+
+eye_open_img = tk.PhotoImage(file = './Resources/hide2.png')
+hide_pass = ttk.Button(
+    main,
+    image = eye_open_img,
+    text = "Hide passwords",
+    compound = tk.LEFT,
+    command = hide_show
+)
+
 
 #layout
 scrollbar.grid(row=0, column=6, sticky='ns')
 
 website_label.grid(column=0, row=1, sticky= tk.W, padx = 20, pady= 10, columnspan = 3)
 username_label.grid(column=0, row=2, sticky= tk.W, padx = 20, pady= 10, columnspan = 3)
-open_website_button.grid(column=4, row=1, sticky= tk.E, padx = 20, pady= 10)
-copy_username.grid(column=4, row=2, sticky= tk.E, padx = 20, pady= 10)
-copy_password.grid(column=4, row=3, sticky= tk.E, padx = 20, pady= 10)
+open_website_button.grid(column=5, row=1, sticky= tk.E, padx = 20, pady= 10)
+copy_username.grid(column=5, row=2, sticky= tk.E, padx = 20, pady= 10)
+copy_password.grid(column=5, row=3, sticky= tk.E, padx = 20, pady= 10)
 
-button.grid(column=0, row=4, sticky= tk.W, padx = 20, pady= 10)
+button.grid(column=0, row=4, sticky= tk.E, padx = 20, pady= 10)
 new_data_button.grid(column=0, row=6, sticky= tk.W, padx = 20, pady= 10)
-delete_button.grid(column=0, row=7, sticky= tk.W, padx = 20, pady= 10)
-hide_or_show.grid(column=1, row=7, sticky= tk.W, padx = 20, pady= 10)
+delete_button1.grid(column=0, row=7, sticky= tk.W, padx = 20, pady= 10)
+show_pass.grid(column=1, row=7, sticky= tk.W, padx = 20, pady= 10)
+
+
+#event binding
+delete_button1.bind('<Enter>', change_bin)
+delete_button2.bind('<Leave>', change_bin)
+
 
 #don't know why I made it like this, I just did
 os.system('login.py')
@@ -309,3 +358,4 @@ with open('f6a214f7a5fcda0c2cee9660b7fc29f5649e3c68aad48e20e950137c98913a68.txt'
 if lines[0] == '3cbc87c7681f34db4617feaa2c8801931bc5e42d8d0f560e756dd4cd92885f18':
     os.remove('f6a214f7a5fcda0c2cee9660b7fc29f5649e3c68aad48e20e950137c98913a68.txt')
     main.mainloop()
+    

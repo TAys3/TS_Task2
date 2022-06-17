@@ -7,7 +7,7 @@ from tkinter.messagebox import askyesno
 #can add the ability to have different users depending on their login
 
 dbtest = tk.Tk()
-dbtest.title('db test')
+dbtest.title('Save Log In Credentials')
 window_width = 400
 window_height = 500
 screen_width = dbtest.winfo_screenwidth()                     #these 5 lines put the window in the middle of the screen
@@ -16,6 +16,7 @@ center_x = int(screen_width / 2 - window_width / 2)
 center_y = int(screen_height / 2 - window_height / 2)
 dbtest.geometry(f'{window_width}x{window_height}+{center_x}+{center_y}')   
 dbtest.resizable(False, False)
+dbtest.iconbitmap('./Resources/lock_img.ico')
 font = 'fira code'
 
 #functions

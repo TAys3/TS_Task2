@@ -19,6 +19,7 @@ center_x = int(screen_width / 2 - window_width / 2)
 center_y = int(screen_height / 2 - window_height / 2)
 root.geometry(f'{window_width}x{window_height}+{center_x}+{center_y}')   
 root.resizable(False, False)                                             #window will not be able to be resized
+root.iconbitmap('./Resources/lock_img.ico')
 
 font = 'fira code'
 LOWER_CASE = string.ascii_lowercase

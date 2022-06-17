@@ -20,9 +20,8 @@ login.iconbitmap('./Resources/lock_img.ico')
 font = 'fira code'
 
 
-
 #functions
-def log_in():                                                            #checks the user's login credentials, and logs them in if they are correct.
+def log_in():                       #checks the user's login credentials, and logs them in if they are correct.
     password_hash = hashlib.sha256((password.get()).encode('utf-8')).hexdigest()
     
     conn = sqlite3.connect('users.db')
@@ -54,7 +53,10 @@ def log_in():                                                            #checks
         else:
             showerror(title = "Error!", message = "Username or password incorrect!")
 
+def log_in2(event):                 #event bindings are kinda broken, so have to do this
+    log_in()
 
+#widgets
 header_label = ttk.Label(
     login, 
     text= 'Log in:',
@@ -93,11 +95,16 @@ login_button = ttk.Button(
 )
 
 
+#layout
 header_label.grid(column = 0, row = 0, sticky = tk.EW, padx = 20, pady = 15, columnspan = 2)
 username_label.grid(column = 0, row = 1, sticky = tk.W, padx = 20, pady = 15)
 username_entry.grid(column = 1, row = 1, sticky = tk.W, padx = 20, pady = 15)
 password_label.grid(column = 0, row = 2, sticky = tk.W, padx = 20, pady = 15)
 password_entry.grid(column = 1, row = 2, sticky = tk.W, padx = 20, pady = 15)
 login_button.grid(column = 1, row = 3, sticky = tk.NE, padx = 20, pady = 5)
+
+
+#event binding
+login.bind('<Return>', log_in2)
 
 login.mainloop()
