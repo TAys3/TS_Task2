@@ -22,9 +22,10 @@ main.iconbitmap('./Resources/lock_img.ico')
 font = 'fira code'
 pass_visible = False
 bin_frame = 'closed'
+eye_frame = 'closed'
 
 #functions
-def window():                                       #runs the password generator
+def pass_gen():                                     #runs the password generator
     os.system('tk_pass_gen.py')
     remake_tree()
 
@@ -171,6 +172,7 @@ def remove_data():                                  #deletes a record from the d
 
 def hide_show():                                    #hides and shows the passwords column, which has the passwords in plain text (probably could have just remade the tree with *'s instead of the password in plain text)
     global pass_visible
+    global eye_frame
     if pass_visible == False:
         os.system('pin_auth.py')
         with open('pinworkornot.txt', 'r') as f:
@@ -184,6 +186,7 @@ def hide_show():                                    #hides and shows the passwor
             password_label.grid(column=0, row=3, sticky= tk.W, padx = 20, pady= 10, columnspan = 3)
             show_pass.grid_forget()
             hide_pass.grid(column=1, row=7, sticky= tk.W, padx = 20, pady= 10)
+            eye_frame = 'closed'
         else:
             pass
 
@@ -194,6 +197,7 @@ def hide_show():                                    #hides and shows the passwor
         scrollbar2.grid_forget()
         hide_pass.grid_forget()
         show_pass.grid(column=1, row=7, sticky= tk.W, padx = 20, pady= 10)
+        eye_frame = 'closed'
     remake_tree()
 
 def change_bin(event):
@@ -207,6 +211,27 @@ def change_bin(event):
         delete_button1.grid(column=0, row=7, sticky= tk.W, padx = 20, pady= 10)
         bin_frame = 'closed'
 
+def change_eye(event):
+    global eye_frame
+    global pass_visible
+    if pass_visible == False:
+        if eye_frame == 'closed':
+            show_pass1.grid_forget()
+            show_pass.grid(column=1, row=7, sticky= tk.W, padx = 20, pady= 10)
+            eye_frame = 'open'
+        elif eye_frame == 'open':
+            show_pass.grid_forget()
+            show_pass1.grid(column=1, row=7, sticky= tk.W, padx = 20, pady= 10)
+            eye_frame = 'closed'
+    elif pass_visible == True:
+        if eye_frame == 'open':
+            hide_pass1.grid_forget()
+            hide_pass.grid(column=1, row=7, sticky= tk.W, padx = 20, pady= 10)
+            eye_frame = 'closed'
+        elif eye_frame == 'closed':
+            hide_pass.grid_forget()
+            hide_pass1.grid(column=1, row=7, sticky= tk.W, padx = 20, pady= 10)
+            eye_frame = 'open'
 
 #widgets
 columns = ('website', 'username')
@@ -254,10 +279,13 @@ password_label = ttk.Label(
     font=(f'{font}', 12),
 )
 
-button = ttk.Button(
+pass_img = tk.PhotoImage(file = './Resources/passgen_img2.png')
+pass_gen_button = ttk.Button(
     main,
+    image = pass_img,
+    compound = tk.LEFT,
     text = 'Password Generator',
-    command = window
+    command = pass_gen
 )
 
 new_data_button = ttk.Button(
@@ -328,6 +356,22 @@ hide_pass = ttk.Button(
     command = hide_show
 )
 
+show_pass1 = ttk.Button(
+    main,
+    image = eye_open_img,
+    text = "Show passwords",
+    compound = tk.LEFT,
+    command = hide_show
+)
+
+hide_pass1 = ttk.Button(
+    main,
+    image = eye_closed_img,
+    text = "Hide passwords",
+    compound = tk.LEFT,
+    command = hide_show
+)
+
 
 #layout
 scrollbar.grid(row=0, column=6, sticky='ns')
@@ -338,15 +382,21 @@ open_website_button.grid(column=5, row=1, sticky= tk.E, padx = 20, pady= 10)
 copy_username.grid(column=5, row=2, sticky= tk.E, padx = 20, pady= 10)
 copy_password.grid(column=5, row=3, sticky= tk.E, padx = 20, pady= 10)
 
-button.grid(column=0, row=4, sticky= tk.E, padx = 20, pady= 10)
+pass_gen_button.grid(column=0, row=4, sticky= tk.E, padx = 20, pady= 10)
 new_data_button.grid(column=0, row=6, sticky= tk.W, padx = 20, pady= 10)
 delete_button1.grid(column=0, row=7, sticky= tk.W, padx = 20, pady= 10)
-show_pass.grid(column=1, row=7, sticky= tk.W, padx = 20, pady= 10)
+show_pass1.grid(column=1, row=7, sticky= tk.W, padx = 20, pady= 10)
 
 
 #event binding
 delete_button1.bind('<Enter>', change_bin)
 delete_button2.bind('<Leave>', change_bin)
+
+show_pass.bind('<Leave>', change_eye)
+show_pass1.bind('<Enter>', change_eye)
+
+hide_pass.bind('<Leave>', change_eye)
+hide_pass1.bind('<Enter>', change_eye)
 
 
 #don't know why I made it like this, I just did
