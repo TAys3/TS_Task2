@@ -1,17 +1,20 @@
+from time import sleep
 import tkinter as tk
-from tkinter import CENTER, ttk
-from tkinter.messagebox import showinfo, askyesno
+from tkinter import ttk
+from tkinter.messagebox import askyesno
 import os
 import sqlite3
 import pyperclip
 import webbrowser
+import string
+import random
 
 
 #can add the ability to have different users depending on their login
 main = tk.Tk()
 main.title('Password Manager')
-window_width = 700
-window_height = 600
+window_width = 855
+window_height = 430
 screen_width = main.winfo_screenwidth()             #these 5 lines put the window in the middle of the screen
 screen_height = main.winfo_screenheight()
 center_x = int(screen_width / 2 - window_width / 2)                      
@@ -49,14 +52,14 @@ def create_tree():                                  #creates the tree widget
     if pass_visible == False:
         for record in records:                          #update the values
             tree.insert('', tk.END, values=record)
-        tree.grid(row=0, column=0, sticky='nsew', columnspan= 6)
-        scrollbar.grid(row=0, column=6, sticky='ns')
+        tree.grid(row=0, column=1, sticky='nsew', columnspan= 6, rowspan= 4, ipadx = 100)
+        scrollbar.grid(row=0, column=7, sticky='ns', rowspan= 4)
 
     else:
         for record in records:                          #update the values
             pass_tree.insert('', tk.END, values=record)
-        pass_tree.grid(row=0, column=0, sticky='nsew', columnspan= 6)
-        scrollbar2.grid(row=0, column=6, sticky='ns')
+        pass_tree.grid(row=0, column=1, sticky='nsew', columnspan= 6, rowspan= 4)
+        scrollbar2.grid(row=0, column=7, sticky='ns', rowspan= 4)
 
 def item_selected(event):                           #updates the labels with selected info
     global pass_visible
@@ -77,10 +80,10 @@ def item_selected(event):                           #updates the labels with sel
         password_label.configure(text = f'Password: {is_too_long(recorded[2])}')        #I think it's due to records moving around and stuff, and the selection going wonky, but idk. Hopefully won't lose marks
 
 def is_too_long(text):                              #makes sure the copy button and other widgets aren't pushed around
-    if len(text) <= 20:
-        return text
-    elif len(text) > 20:
-        new = f'{text[:21]}...'
+    if len(str(text)) <= 20:
+        return str(text)
+    elif len(str(text)) > 20:
+        new = f'{str(text)[:21]}...'
         return new
 
 def remake_tree():                                  #remakes the tree to update it
@@ -183,7 +186,7 @@ def hide_show():                                    #hides and shows the passwor
             pass_visible = True
             tree.grid_forget()
             scrollbar.grid_forget()
-            password_label.grid(column=0, row=3, sticky= tk.W, padx = 20, pady= 10, columnspan = 3)
+            password_label.grid(column=1, row=6, sticky= tk.W, padx = 20, pady= 10, columnspan = 3)
             show_pass.grid_forget()
             hide_pass.grid(column=1, row=7, sticky= tk.W, padx = 20, pady= 10)
             eye_frame = 'closed'
@@ -200,38 +203,49 @@ def hide_show():                                    #hides and shows the passwor
         eye_frame = 'closed'
     remake_tree()
 
-def change_bin(event):
+def change_bin(event):                              #changes the bin button image. Very, VERY jank cause of garbage collection I think
     global bin_frame
     if bin_frame == 'closed':
         delete_button1.grid_forget()
-        delete_button2.grid(column=0, row=7, sticky= tk.W, padx = 20, pady= 10)
+        delete_button2.grid(column=0, row=2, sticky= tk.W, padx = 20, pady= 10, ipadx= 40)
         bin_frame = 'open'
     elif bin_frame == 'open':
         delete_button2.grid_forget()
-        delete_button1.grid(column=0, row=7, sticky= tk.W, padx = 20, pady= 10)
+        delete_button1.grid(column=0, row=2, sticky= tk.W, padx = 20, pady= 10, ipadx= 40)
         bin_frame = 'closed'
 
-def change_eye(event):
+def change_eye(event):                              #changes the show/hide password button image. Very, VERY jank cause of garbage collection I think
     global eye_frame
     global pass_visible
     if pass_visible == False:
         if eye_frame == 'closed':
             show_pass1.grid_forget()
-            show_pass.grid(column=1, row=7, sticky= tk.W, padx = 20, pady= 10)
+            show_pass.grid(column=0, row=3, sticky= tk.W, padx = 20, pady= 10, ipadx= 26)
             eye_frame = 'open'
         elif eye_frame == 'open':
             show_pass.grid_forget()
-            show_pass1.grid(column=1, row=7, sticky= tk.W, padx = 20, pady= 10)
+            show_pass1.grid(column=0, row=3, sticky= tk.W, padx = 20, pady= 10, ipadx= 26)
             eye_frame = 'closed'
     elif pass_visible == True:
         if eye_frame == 'open':
             hide_pass1.grid_forget()
-            hide_pass.grid(column=1, row=7, sticky= tk.W, padx = 20, pady= 10)
+            hide_pass.grid(column=0, row=3, sticky= tk.W, padx = 20, pady= 10, ipadx= 28)
             eye_frame = 'closed'
         elif eye_frame == 'closed':
             hide_pass.grid_forget()
-            hide_pass1.grid(column=1, row=7, sticky= tk.W, padx = 20, pady= 10)
+            hide_pass1.grid(column=0, row=3, sticky= tk.W, padx = 20, pady= 10, ipadx= 28)
             eye_frame = 'open'
+
+def pass_thing(event):                              #idk if this is cool or not. Wanted to do something similar to my password button. Changes the text before password generator
+    characters = f"{string.ascii_letters}{string.punctuation}{string.digits}"
+    for i in range(4):
+        img_thing = ''
+        for n in range(6):
+            img_thing += random.choice(characters)
+        pass_gen_button['text'] = f'{img_thing} Password Generator'
+        pass_gen_button.update()
+        sleep(0.05)
+
 
 #widgets
 columns = ('website', 'username')
@@ -257,7 +271,7 @@ scrollbar2 = ttk.Scrollbar(main, orient=tk.VERTICAL, command=pass_tree.yview)
 pass_tree.configure(yscroll=scrollbar2.set)
 
 
-create_tree()
+create_tree()   #this makes code shorter
 
 
 website_label = ttk.Label(
@@ -279,17 +293,17 @@ password_label = ttk.Label(
     font=(f'{font}', 12),
 )
 
-pass_img = tk.PhotoImage(file = './Resources/passgen_img2.png')
 pass_gen_button = ttk.Button(
     main,
-    image = pass_img,
-    compound = tk.LEFT,
-    text = 'Password Generator',
+    text = '{^*!#@? Password Generator',
     command = pass_gen
 )
 
+plus_img = tk.PhotoImage(file = './Resources/plus2.png')
 new_data_button = ttk.Button(
     main,
+    image = plus_img,
+    compound = tk.LEFT,
     text = 'New credentials',
     command = new_data
 )
@@ -374,18 +388,18 @@ hide_pass1 = ttk.Button(
 
 
 #layout
-scrollbar.grid(row=0, column=6, sticky='ns')
+scrollbar.grid(row=0, column=7, sticky='ns', rowspan=4)
 
-website_label.grid(column=0, row=1, sticky= tk.W, padx = 20, pady= 10, columnspan = 3)
-username_label.grid(column=0, row=2, sticky= tk.W, padx = 20, pady= 10, columnspan = 3)
-open_website_button.grid(column=5, row=1, sticky= tk.E, padx = 20, pady= 10)
-copy_username.grid(column=5, row=2, sticky= tk.E, padx = 20, pady= 10)
-copy_password.grid(column=5, row=3, sticky= tk.E, padx = 20, pady= 10)
+website_label.grid(column=1, row=4, sticky= tk.W, padx = 20, pady= 10, columnspan = 3)
+username_label.grid(column=1, row=5, sticky= tk.W, padx = 20, pady= 10, columnspan = 3)
+open_website_button.grid(column=6, row=4, sticky= tk.E, padx = 20, pady= 10)
+copy_username.grid(column=6, row=5, sticky= tk.E, padx = 20, pady= 10)
+copy_password.grid(column=6, row=6, sticky= tk.E, padx = 20, pady= 10)
 
-pass_gen_button.grid(column=0, row=4, sticky= tk.E, padx = 20, pady= 10)
-new_data_button.grid(column=0, row=6, sticky= tk.W, padx = 20, pady= 10)
-delete_button1.grid(column=0, row=7, sticky= tk.W, padx = 20, pady= 10)
-show_pass1.grid(column=1, row=7, sticky= tk.W, padx = 20, pady= 10)
+pass_gen_button.grid(column=0, row=0, sticky= tk.NW, padx = 20, pady= 10, ipadx= 10, ipady= 10)
+new_data_button.grid(column=0, row=1, sticky= tk.W, padx = 20, pady= 10)
+delete_button1.grid(column=0, row=2, sticky= tk.W, padx = 20, pady= 10, ipadx= 40)
+show_pass1.grid(column=0, row=3, sticky= tk.W, padx = 20, pady= 10, ipadx= 26)
 
 
 #event binding
@@ -398,6 +412,8 @@ show_pass1.bind('<Enter>', change_eye)
 hide_pass.bind('<Leave>', change_eye)
 hide_pass1.bind('<Enter>', change_eye)
 
+pass_gen_button.bind('<Enter>', pass_thing)
+
 
 #don't know why I made it like this, I just did
 os.system('login.py')
@@ -408,4 +424,3 @@ with open('f6a214f7a5fcda0c2cee9660b7fc29f5649e3c68aad48e20e950137c98913a68.txt'
 if lines[0] == '3cbc87c7681f34db4617feaa2c8801931bc5e42d8d0f560e756dd4cd92885f18':
     os.remove('f6a214f7a5fcda0c2cee9660b7fc29f5649e3c68aad48e20e950137c98913a68.txt')
     main.mainloop()
-    
