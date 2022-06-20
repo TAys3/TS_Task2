@@ -16,6 +16,7 @@ center_x = int(screen_width / 2 - window_width / 2)
 center_y = int(screen_height / 2 - window_height / 2)
 auth_change.geometry(f'{window_width}x{window_height}+{center_x}+{center_y}')   
 auth_change.resizable(False, False)
+auth_change.iconbitmap('./Resources/lock_img.ico')
 
 def check_pin():
     pin_hash = hashlib.sha256((pin_entry.get()).encode('utf-8')).hexdigest()
