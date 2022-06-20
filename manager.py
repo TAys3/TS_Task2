@@ -107,9 +107,15 @@ def open_website():                                 #opens the website (need to 
     webbrowser.open(f'{recorded[0]}', new = 2, autoraise = True)
 
 def copy_user():                                    #copies the username to the clipboard
-    for selected_item in tree.selection():
-        item = tree.item(selected_item)
-        recorded = item['values']
+    global pass_visible
+    if pass_visible == False:
+        for selected_item in tree.selection():
+            item = tree.item(selected_item)
+            recorded = item['values']
+    elif pass_visible == True:
+        for selected_item in pass_tree.selection():
+            item = pass_tree.item(selected_item)
+            recorded = item['values']            
     pyperclip.copy(recorded[1])
 
 def copy_pass():                                    #copies the password to the clipboard
@@ -146,11 +152,17 @@ def copy_pass():                                    #copies the password to the 
             pass
 
 def remove_data():                                  #deletes a record from the database (probably very jank)
+    global pass_visible
     answer = askyesno(title = 'Are you sure?', message = 'Are you sure you want to delete?')
     if answer == True:
-        for selected_item in tree.selection():
-            item = tree.item(selected_item)
-            recorded = item['values']
+        if pass_visible == False:
+            for selected_item in tree.selection():
+                item = tree.item(selected_item)
+                recorded = item['values']
+        elif pass_visible == True:
+            for selected_item in pass_tree.selection():
+                item = pass_tree.item(selected_item)
+                recorded = item['values']
 
         conn = sqlite3.connect('password.db')
         cur = conn.cursor()
